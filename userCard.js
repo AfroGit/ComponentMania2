@@ -5,6 +5,7 @@ template.innerHTML = `
       font-family: 'Arial', sans-serif;
       background: #f4f4f4;
       width: 500px;
+      height: 225px;
       display: grid;
       grid-template-columns: 1fr 2fr;
       grid-gap: 10px;
@@ -35,6 +36,7 @@ template.innerHTML = `
         <div class="info">
             <p><slot name="email" /></p>
             <p><slot name="phone" /></p>
+            <p><slot name="department" /></p>
         </div>
         <button class="toggle-info">Hide Info</button>
     </div>
@@ -46,6 +48,8 @@ template.innerHTML = `
 class UserCard extends HTMLElement {
   constructor() {
     super();
+
+    this.showInfo = true;
 
     this.attachShadow({ mode: 'open' });//this process creates the shadow DOM
     this.shadowRoot.appendChild(template.content.cloneNode(true));
@@ -59,13 +63,29 @@ class UserCard extends HTMLElement {
   }
 
   toggleInfo() {
-    console.log(123);
+    this.showInfo = !this.showInfo;
+
+    const info = this.shadowRoot.querySelector('.info');
+    const toggleBtn = this.shadowRoot.querySelector('button');
+
+    if(this.showInfo) {
+      info.style.display = 'block';
+      toggleBtn.innerText = 'Hide Info';
+    } else {
+      info.style.display = 'none';
+      toggleBtn.innerText = 'Show Info';
+    }
   }
 
   connectedCallback() {
     this.shadowRoot.querySelector('button').addEventListener('click', () => {
       this.toggleInfo();
     });
+  }
+
+  disconnectedCallback(){
+    this.shadowRoot.querySelector('button').removeEventListener();
+    
   }
 }
 
